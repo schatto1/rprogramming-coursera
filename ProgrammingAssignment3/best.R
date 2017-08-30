@@ -34,23 +34,21 @@ best <- function(state, outcome)
     }
     subsetData <- outcomeData[c("Hospital.Name", "State", target)]
     
+    ## rename column names for later use
+    names(subsetData) <- c("Name", "State", "Outcome")
+    
     ## Coerce columns of interest into numeric columns
-    subsetData[, target] <- as.numeric(subsetData[, target])
+    subsetData[, "Outcome"] <- as.numeric(subsetData[, "Outcome"])
     
     ## filter by state and remove incomplete entries
     subsetData <- na.omit(subsetData[subsetData$State == state, ])
     
-    print(head(subsetData))
-    
     ## Return hospital name in that state with lowest 30-day death
     ## rate
+    ## order data by Outcome values, then by Name
+    subsetData <- subsetData[order(subsetData$Outcome, subsetData$Name), ]
     
-    targetOutcome <- paste("subsetData", target, sep = "$")
-    print(targetOutcome)
-    
-    ## Sort by death rate, and then hospital name
-    subsetData <- subsetData[order(target), ]
-    
+    ## Return the Name of the Hospital at the top
     subsetData[1,1]
     
 }
