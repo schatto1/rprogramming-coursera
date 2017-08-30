@@ -4,7 +4,6 @@ best <- function(state, outcome)
     outcomeData <- read.csv("outcome-of-care-measures.csv", colClasses = "character")
     
     ## Check that state and outcome are valid
-    ## stateNames <- unique(outcome["State"]) ## contains distinct state names
     validOutcomes <- c("heart attack", "heart failure", "pneumonia")
     
     if (!(state %in% outcomeData$State))
