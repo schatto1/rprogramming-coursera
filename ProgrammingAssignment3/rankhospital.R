@@ -15,6 +15,10 @@ rankhospital <- function(state, outcome, num = "best")
     {
         stop("invalid outcome")
     }
+    if (!(class(num) == "numeric" | num == "best" | num == "worst"))
+    {
+        stop("invalid ranking")
+    }
     
     ## state and outcome are valid; create data subset
     ## subset will only contain columns that are related to desired outcome
@@ -47,4 +51,18 @@ rankhospital <- function(state, outcome, num = "best")
     
     ## Return hospital name in that state with the given rank
     ## 30-day death rate
+    
+    if (class(num) == "numeric")
+    {
+        return(subsetData[num, 1])
+    }
+    else if (num == "best")
+    {
+        return(subsetData[1, 1])
+    }
+    else if (num == "worst")
+    {
+        last <- nrow(subsetData)
+        return(subsetData[last, 1])
+    }
 }
