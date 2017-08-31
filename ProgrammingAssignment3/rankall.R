@@ -35,10 +35,54 @@ rankall <- function(outcome, num = "best")
     ## rename column names for later use
     names(subsetData) <- c("Name", "State", "Outcome")
     
+    ## Coerce columns of interest into numeric columns
+    subsetData[, "Outcome"] <- as.numeric(subsetData[, "Outcome"])
+    
     ## create list of unique states
     states <- unique(subsetData$State)
+    states <- states[order(states)]
+    
+    ## remove incomplete entries
+    subsetData <- na.omit(subsetData)
     
     ## For each state, find the hospital of the given rank
     ## Return a data frame with the hospital names and the
     ## (abbreviated) state name
+    
+    ## create empty dataframe
+    hospitalList <- data.frame(hospital = character(),
+                              state = character())
+    
+    for (currentState in states)
+    {
+        ## filter by state
+        stateData <- subsetData[subsetData$State == currentState, ]
+        
+        ## order data by Outcome values, then by Name
+        stateData <- stateData[order(stateData$Outcome, stateData$Name), ]
+        
+        ## Return hospital name in that state with the given rank
+        ## 30-day death rate
+        
+        if (class(num) == "numeric")
+        {
+            hospitalList <- rbind(hospitalList, data.frame(hospital = stateData[num, 1], 
+                                                           state = currentState))
+        }
+        else if (num == "best")
+        {
+            hospitalList <- rbind(hospitalList, data.frame(hospital = stateData[1, 1], 
+                                                           state = currentState))
+        }
+        else if (num == "worst")
+        {
+            last <- nrow(stateData)
+            hospitalList <- rbind(hospitalList, data.frame(hospital = stateData[last, 1], 
+                                                           state = currentState))
+        }
+    }
+    
+    ## out of loop, dataframe should contain all entries
+    row.names(hospitalList) <- states
+    hospitalList
 }
